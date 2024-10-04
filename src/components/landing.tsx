@@ -1,17 +1,50 @@
-import { CardTitle, CardDescription, CardHeader, CardContent, Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
+
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import axios from "axios";
+import confetti from "canvas-confetti"; // Import the confetti library
+
 
 const BACKEND_UPLOAD_URL = process.env.NEXT_PUBLIC_BACKEND_UPLOAD_URL || "http://localhost:3000";
+
+
 const githubUrlPattern = /^https:\/\/github\.com\/[^\/]+\/[^\/]+\.git$/;
+
+interface ConfettiButtonProps {
+  children: React.ReactNode;
+  [key: string]: any; 
+}
+
+interface ConfettiButtonHandle {
+  triggerConfetti: () => void;
+}
+
+const ConfettiButton = forwardRef<ConfettiButtonHandle, ConfettiButtonProps>((props, ref) => {
+  const triggerConfetti = () => {
+
+    confetti({
+      particleCount: 100,
+      angle: 90,
+      spread: 70, 
+      startVelocity: 30, 
+      decay: 0.9, 
+      gravity: 0.4, 
+      scalar: 1,
+    });
+  };
+
+  useImperativeHandle(ref, () => ({
+    triggerConfetti,
+  }));
+
+  return null; 
+});
+
 export function Landing() {
-  const [repoUrl, setRepoUrl] = useState("");
-  const [uploadId, setUploadId] = useState("");
-  const [uploading, setUploading] = useState(false);
-  const [deployed, setDeployed] = useState(false);
+  const [repoUrl, setRepoUrl] = useState<string>("");
+  const [uploadId, setUploadId] = useState<string>("");
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [deployed, setDeployed] = useState<boolean>(false);
+  const confettiRef = useRef<{ triggerConfetti: () => void } | null>(null); 
 
   const handleDeployment = async () => {
     try {
@@ -35,67 +68,73 @@ export function Landing() {
       console.error("Deployment failed:", error);
     }
   };
-  const isValidRepoUrl = githubUrlPattern.test(repoUrl);
+
+  const isValidRepoUrl: boolean = githubUrlPattern.test(repoUrl);
+
+  useEffect(() => {
+    if (deployed && confettiRef.current) {
+      confettiRef.current.triggerConfetti();
+    }
+  }, [deployed]);
 
   return (
-    <>
-      <div className="absolute top-4 left-4">
-        <h1 className="text-4xl font-bold spicy-rice-regular  text-white">SKYLAUNCHER..</h1>
-      </div>
-      <main className="flex flex-col items-center justify-center h-screen p-4 relative  line-clamp-2 spicy-rice-regular ">
-        <Card className="w-full max-w-md bg-gray-900 text-white">
-          <CardHeader>
-            <CardTitle className="text-xl">Deploy your GitHub Repository</CardTitle>
-            <CardDescription>Enter the URL of your GitHub repository to deploy it</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="github-url">GitHub Repository URL</Label>
-                <Input
-                  onChange={(e) => setRepoUrl(e.target.value)}
-                  placeholder="https://github.com/username/repo.git"
-                />
-              </div>
-              <Button
-                onClick={handleDeployment}
-                disabled={!isValidRepoUrl || uploadId !== "" || uploading}
-                className="w-full bg-black text-white"
-                variant="outline"
-                type="submit"
-              >
-                {uploading ? "Uploading..." : uploadId ? `Deploying (${uploadId})` : "Upload"}
-              </Button>
+    <main className="flex flex-col items-center justify-center h-full mt-10 mb-5 p-2 relative">
+      <div className={`flex flex-col lg:flex-row justify-center items-center gap-8 w-full max-w-4xl`}>
+        <div className="w-full max-w-md bg-gray-900 text-white p-4 rounded">
+          <h2 className="text-xl spicy-rice-regular md:text-4xl mb-5">Add GitHub Repo Url</h2>
+          <p className="rowdies-light mb-3 ">Enter the GitHub  URL  repository to deploy it ,only react ,react+vite and html/css/js apps can be deployed</p>
+          <div className="space-y-4">
+            <div className="space-y-2 rowdies-light">
+              <label htmlFor="github-url ">GitHub Repository URL</label>
+              <input
+                id="github-url"
+                type="url"
+                onChange={(e) => setRepoUrl(e.target.value)}
+                placeholder="https://github.com/username/repo.git"
+                className="w-full p-2 border border-gray-400 rounded text-black"
+              />
             </div>
-          </CardContent>
-        </Card>
+            <button
+              onClick={handleDeployment}
+              disabled={!isValidRepoUrl || uploadId !== "" || uploading}
+              className="w-full bg-black text-white p-2 rounded rowdies-light"
+              type="submit"
+            >
+              {uploading ? "Uploading..." : uploadId ? `Deploying (${uploadId})` : "Upload"}
+            </button>
+          </div>
+        </div>
 
         {deployed && (
-          <Card className="w-full max-w-md mt-8 bg-gray-900 text-white">
-            <CardHeader>
-              <CardTitle className="text-xl">Deployment Status</CardTitle>
-              <CardDescription>Your website is successfully deployed!</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Label htmlFor="deployed-url">Deployed URL</Label>
-                <Input
-                  id="deployed-url"
-                  readOnly
-                  type="url"
-                  value={`http://${uploadId}.sky.com:3001/index.html`}
-                />
-              </div>
-              <br />
-              <Button className="w-full bg-black text-white" variant="outline" asChild>
-                <a href={`http://${uploadId}.sky.com:3001/index.html`} target="_blank" rel="noopener noreferrer">
-                  Visit Website
-                </a>
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="w-full max-w-md bg-gray-900 text-white p-4 rounded">
+            <h2 className="text-xl spicy-rice-regular md:text-4xl mb-4">App Deployment Status</h2>
+            <p className="rowdies-light mb-3 ">Your website is successfully deployed! and can be accesed anywhere </p>
+            <div className="space-y-2 rowdies-light">
+              <label htmlFor="deployed-url">Deployed URL</label>
+              <input
+                id="deployed-url"
+                readOnly
+                type="url"
+                value={`http://${uploadId}.sky.com:3001/index.html`}
+                className="w-full p-2 border border-gray-400 rounded text-black"
+              />
+            </div>
+            <br />
+            <button className="w-full bg-black text-white p-2 rounded rowdies-light">
+              <a href={`http://${uploadId}.sky.com:3001/index.html`} target="_blank" rel="noopener noreferrer">
+                Visit Website
+              </a>
+            </button>
+          </div>
         )}
-      </main>
-    </>
+      </div>
+
+
+      {deployed && (
+        <div className="absolute bottom-10">
+          <ConfettiButton ref={confettiRef} /> 
+        </div>
+      )}
+    </main>
   );
 }
