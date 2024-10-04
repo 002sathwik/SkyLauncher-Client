@@ -27,7 +27,7 @@ const links = [{
   icon: (
     <IconBrandGithub className="h-full w-full text-neutral-500 dark:text-neutral-300" />
   ),
-  href: "#",
+  href: "https://github.com/002sathwik",
 },
 ];
 
@@ -53,7 +53,7 @@ export default function Home() {
         items={links}
       />
       <footer className="absolute bottom-4 left-0 right-0 flex items-center justify-center text-xs text-center space-x-2 rowdies-light">
-        <p>--MADE USING AWS-S3, AWS-SQS, VERCEL, REDIS, NODE, TS --</p>
+        <p>--MADE USING AWS-S3, AWS-SQS, VERCEL, REDIS, NODE, NEXT,  TS --</p>
       </footer>
 
 
