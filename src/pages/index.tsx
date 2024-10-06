@@ -41,7 +41,7 @@ export default function Home() {
       </div>
 
 
-      <h2 className="spicy-rice-regular bg-clip-text text-transparent text-center bg-gradient-to-b from-neutral-900 to-neutral-200 dark:from-neutral-300 dark:to-white text-5xl md:text-4xl lg:text-8xl font-sans py-2 md:py-10 relative z-20 font-bold tracking-tight">
+      <h2 className="spicy-rice-regular bg-clip-text text-transparent text-center bg-gradient-to-b from-neutral-900 to-neutral-200 dark:from-neutral-300 dark:to-white text-6xl md:text-6xl lg:text-9xl font-sans py-2 md:py-10 relative z-20 font-bold tracking-tight">
         SkyLauncher <br /> Deployment
       </h2>
       <p className="max-w-xl rowdies-light mx-auto text-sm md:text-lg text-neutral-100 dark:text-neutral-300 text-center mb-2">
