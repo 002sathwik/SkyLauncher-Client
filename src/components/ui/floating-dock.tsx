@@ -42,44 +42,23 @@ const FloatingDockMobile = ({
     className?: string;
 }) => {
     const [open, setOpen] = useState(false);
+    let mouseX = useMotionValue(Infinity);
     return (
-        <div className={cn("relative block md:hidden", className)}>
-        <AnimatePresence>
-            {open && (
-                <motion.div
-                    layoutId="nav"
-                    className="absolute bottom-full mb-2 inset-x-0 flex justify-center items-center"
-                >
-                    {items.map((item, idx) => (
-                        <motion.div
-                            key={item.title}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{
-                                opacity: 1,
-                                y: 0,
-                            }}
-                            exit={{
-                                opacity: 0,
-                                y: 10,
-                                transition: {
-                                    delay: idx * 0.05,
-                                },
-                            }}
-                            transition={{ delay: (items.length - 1 - idx) * 0.05 }}
-                        >
-                            <Link
-                                href={item.href}
-                                className="h-10 w-10 rounded-full bg-gray-50 dark:bg-neutral-900 flex items-center justify-center mx-2" // Add mx-2 for spacing between items
-                            >
-                                <div className="h-4 w-4">{item.icon}</div>
-                            </Link>
-                        </motion.div>
-                    ))}
-                </motion.div>
-            )}
-        </AnimatePresence>
-    </div>
-    
+       
+          
+            <motion.div
+                onMouseMove={(e) => mouseX.set(e.pageX)}
+                onMouseLeave={() => mouseX.set(Infinity)}
+                className={cn(
+                    "mx-auto md:hidden flex h-16 gap-4 items-end  rounded-2xl bg-gray-50 dark:bg-neutral-900 px-4 pb-3",
+                    className
+                )}
+            >
+                {items.map((item) => (
+                    <IconContainer mouseX={mouseX} key={item.title} {...item} />
+                ))}
+            </motion.div>
+ 
     );
 };
 
