@@ -4,7 +4,7 @@ import axios from "axios";
 import confetti from "canvas-confetti"; // Import the confetti library
 
 
-const BACKEND_UPLOAD_URL = process.env.NEXT_PUBLIC_BACKEND_UPLOAD_URL || "http://localhost:3000";
+const BACKEND_UPLOAD_URL = process.env.NEXT_PUBLIC_BACKEND_UPLOAD_URL ;
 
 
 const githubUrlPattern = /^https:\/\/github\.com\/[^\/]+\/[^\/]+\.git$/;
@@ -115,13 +115,13 @@ export function Landing() {
                 id="deployed-url"
                 readOnly
                 type="url"
-                value={`http://${uploadId}.sky.com:3001/index.html`}
+                value={`http://${uploadId}.${process.env.NEXT_PUBLIC_BACKEND_UPLOAD_URL}/index.html`}
                 className="w-full p-2 border border-gray-400 rounded text-black"
               />
             </div>
             <br />
             <button className="w-full bg-black text-white p-2 rounded rowdies-light">
-              <a href={`http://${uploadId}.sky.com:3001/index.html`} target="_blank" rel="noopener noreferrer">
+              <a href={`http://${uploadId}.${process.env.NEXT_PUBLIC_BACKEND_UPLOAD_URL}/index.html`} target="_blank" rel="noopener noreferrer">
                 Visit Website
               </a>
             </button>
