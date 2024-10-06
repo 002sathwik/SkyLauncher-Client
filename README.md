@@ -33,6 +33,7 @@ The architecture is composed of both frontend and backend services, all hosted i
 ### 🛠️ Backend (23 Microservices)
 - **Node.js** - JavaScript runtime for backend logic
 - **Redis** - Real-time caching and messaging
+- **Docker** -  containerizing apps
 
 ### ☁️ AWS Services
 - **[AWS ECS](https://aws.amazon.com/ecs/)** - Elastic Container Service for scalable containerized applications
