@@ -4,7 +4,7 @@ import axios from "axios";
 import confetti from "canvas-confetti"; // Import the confetti library
 
 
-const BACKEND_UPLOAD_URL = process.env.NEXT_PUBLIC_BACKEND_UPLOAD_URL ;
+const BACKEND_UPLOAD_URL = process.env.NEXT_PUBLIC_BACKEND_UPLOAD_URL || "http://localhost:3000";
 
 
 const githubUrlPattern = /^https:\/\/github\.com\/[^\/]+\/[^\/]+\.git$/;
@@ -42,6 +42,7 @@ const ConfettiButton = forwardRef<ConfettiButtonHandle, ConfettiButtonProps>((pr
 export function Landing() {
   const [repoUrl, setRepoUrl] = useState<string>("");
   const [uploadId, setUploadId] = useState<string>("");
+  const[deployId,setDeployId]=useState<string>("");
   const [uploading, setUploading] = useState<boolean>(false);
   const [deployed, setDeployed] = useState<boolean>(false);
   const confettiRef = useRef<{ triggerConfetti: () => void } | null>(null); 
@@ -55,14 +56,27 @@ export function Landing() {
       setUploadId(res.data.id);
       setUploading(false);
 
-      // Check deployment status periodically
+      
       const interval = setInterval(async () => {
-        const response = await axios.get(`${BACKEND_UPLOAD_URL}/status?id=${res.data.id}`);
-        if (response.data.status === "deployed") {
-          clearInterval(interval);
-          setDeployed(true);
+        try {
+            const response = await axios.get(`${BACKEND_UPLOAD_URL}/status?id=${res.data.id}`);
+            console.log(response.data);
+            setDeployId(response.data.Body)
+            if (deployId === uploadId) {
+                clearInterval(interval);  
+                setDeployed(true);
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response && error.response.status === 403) {
+                console.log('403 error: Backend processing time taking longer, retrying...');
+                // Continue polling despite the 403 error, don't clear interval
+            } else {
+                console.error('Unexpected error while polling status:', error);
+                clearInterval(interval);  // Stop polling if there's an unexpected error
+            }
         }
-      }, 3000);
+    }, 3000);
+    
     } catch (error) {
       setUploading(false);
       console.error("Deployment failed:", error);
