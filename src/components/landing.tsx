@@ -7,7 +7,7 @@ import confetti from "canvas-confetti"; // Import the confetti library
 const BACKEND_UPLOAD_URL = process.env.NEXT_PUBLIC_BACKEND_UPLOAD_URL ;
 
 
-const githubUrlPattern = /^https:\/\/github\.com\/[^\/]+\/[^\/]+\.git$/;
+const githubUrlPattern = /^https:\/\/github\.com\/[^\/]+\/[^\/]+$/;
 
 interface ConfettiButtonProps {
   children: React.ReactNode;
