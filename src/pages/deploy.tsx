@@ -3,7 +3,7 @@ import { BackgroundLines } from "@/components/ui/background-lines";
 import axios from "axios";
 import { useState } from "react";
 
-const BACKEND_UPLOAD_URL = process.env.NEXT_PUBLIC_BACKEND_UPLOAD_URL || "http://localhost:3000";
+const BACKEND_UPLOAD_URL = process.env.NEXT_PUBLIC_BACKEND_UPLOAD_URL ;
 
 export default function Home() {
   const [key, setKey] = useState<string>("");
